@@ -1,0 +1,24 @@
+# Docker files
+Dockerfile
+.dockerignore
+
+# Git files
+.git
+.gitignore
+
+# Python virtual environment
+venv
+.venv
+env
+*.env
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
