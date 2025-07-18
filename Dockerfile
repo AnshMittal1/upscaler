@@ -1,4 +1,3 @@
-# --- Builder Stage ---
 FROM python:3.10 AS builder
 
 # Install build dependencies
@@ -10,11 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy requirements and local BasicSR, then install into /install
+# Copy requirements and local BasicSR, then install into /install (includes console scripts)
 COPY requirements.txt ./
 COPY BasicSR/ ./BasicSR/
-RUN pip install --no-cache-dir --target /install -r requirements.txt
-
+RUN pip install --no-cache-dir --prefix /install -r requirements.txt
 
 # --- Final Runtime Stage ---
 FROM python:3.10-slim
@@ -26,8 +24,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Copy installed Python packages from builder
-COPY --from=builder /install /usr/local/lib/python3.10/site-packages/
+# Copy installed Python packages and console scripts from builder
+# Packages will be in /install/lib/python3.10/site-packages
+COPY --from=builder /install/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+# Scripts in /install/bin (e.g. uvicorn entrypoint)
+COPY --from=builder /install/bin /usr/local/bin
 
 # Copy application code
 COPY app.py ./
