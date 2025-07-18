@@ -22,7 +22,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /app/models /app/cache
 
 # Download the model
-RUN wget -O /app/models/RealESRGAN_x4plus.pth \
+RUN wget -O /app/models/RealESRGAN_x4plus_anime_6B.pth \
     https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus_anime_6B.pth
 
 # ---- Final Stage ----
