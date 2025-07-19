@@ -21,27 +21,29 @@ COPY app.py ./
 # ---------- Runtime Stage ----------
 FROM python:3.10-slim AS runtime
 
-# Install system dependencies needed by OpenCV
+# Install system dependencies needed by OpenCV (including libGL)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libglib2.0-0 \
         libsm6 \
         libxrender1 \
         libxext6 \
+        libgl1 \
+        libgl1-mesa-glx \
         wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Create work directory
+# Set work directory
 WORKDIR /app
 
 # Copy installed Python packages from builder
 COPY --from=builder /install /usr/local
 
-# Copy application code and BasicSR (if your app imports it at runtime)
+# Copy application code
 COPY app.py ./
-# If BasicSR code is imported dynamically at runtime, uncomment below:
+# If BasicSR is needed at runtime uncomment:
 # COPY BasicSR/ ./BasicSR/
 
-# Create models and cache directories
+# Create directories for models & cache
 RUN mkdir -p /app/models /app/cache
 
 # Download ESRGAN anime model into models folder
