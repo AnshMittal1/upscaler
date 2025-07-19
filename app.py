@@ -17,7 +17,7 @@ model = RRDBNet(
     num_feat=64,     # number of feature maps
     num_block=6,    # number of RRDB blocks
     num_grow_ch=32,  # growth channels per RDB
-    scale=4          # 4× upscaling
+    scale=2        # 4× upscaling
 )
 model.eval()
 
