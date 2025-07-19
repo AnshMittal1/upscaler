@@ -15,7 +15,7 @@ model = RRDBNet(
     num_in_ch=3,     # input RGB channels
     num_out_ch=3,    # output RGB channels
     num_feat=64,     # number of feature maps
-    num_block=23,    # number of RRDB blocks
+    num_block=6,    # number of RRDB blocks
     num_grow_ch=32,  # growth channels per RDB
     scale=4          # 4× upscaling
 )
