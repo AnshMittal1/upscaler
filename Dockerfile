@@ -17,17 +17,16 @@ RUN pip install --no-cache-dir --prefix /install -r requirements.txt
 # --- Final Runtime Stage ---
 FROM python:3.10-slim
 
-# Install runtime dependencies
+# Install runtime dependencies (including libGL for OpenCV)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         wget \
+        libgl1-mesa-glx \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 # Copy installed Python packages and console scripts from builder
-# Packages will be in /install/lib/python3.10/site-packages
 COPY --from=builder /install/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
-# Scripts in /install/bin (e.g. uvicorn entrypoint)
 COPY --from=builder /install/bin /usr/local/bin
 
 # Copy application code
