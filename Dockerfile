@@ -1,55 +1,43 @@
-# ---------- Builder Stage ----------
-FROM python:3.10 AS builder
+# Dockerfile
 
-# Install build dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        git \
-        build-essential \
-        wget \
-    && rm -rf /var/lib/apt/lists/*
-
+# 1) Build stage: install everything, including your local BasicSR
+FROM python:3.10-slim AS builder
 WORKDIR /app
 
-# Copy requirements and BasicSR source, then install into /install
-COPY requirements.txt ./
+# Copy requirements and your edited BasicSR library
+COPY requirements.txt .
 COPY BasicSR/ ./BasicSR/
+
+# System deps for build
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      build-essential git wget \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install all PyPI deps + your local BasicSR
+# The "-e ./BasicSR" line in requirements.txt makes pip install it
 RUN pip install --no-cache-dir --prefix /install -r requirements.txt
 
-# Copy application code for any code-gen steps (if needed)
-COPY app.py ./
-
-# ---------- Runtime Stage ----------
-FROM python:3.10-slim AS runtime
-
-# Install system dependencies needed by OpenCV (including libGL)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        libglib2.0-0 \
-        libsm6 \
-        libxrender1 \
-        libxext6 \
-        libgl1 \
-        libgl1-mesa-glx \
-        wget \
-    && rm -rf /var/lib/apt/lists/*
-
-# Set work directory
+# 2) Final runtime image
+FROM python:3.10-slim
 WORKDIR /app
 
-# Copy installed Python packages from builder
+# Bring in the pre‑installed packages
 COPY --from=builder /install /usr/local
 
-# Copy application code
-COPY app.py ./
-# If BasicSR is needed at runtime uncomment:
-# COPY BasicSR/ ./BasicSR/
+# Copy your app code
+COPY app.py .
+# If your code imports anything from BasicSR at runtime, you can copy it too:
+COPY BasicSR/ ./BasicSR/
 
 # Create directories for models & cache
-RUN mkdir -p /app/models /app/cache
+RUN mkdir -p models cache
 
-# Download ESRGAN anime model into models folder
-RUN wget -q -O /app/models/RealESRGAN_x4plus.pth \
+# Download your Real-ESRGAN weights at runtime (so that build never fails)
+# (or you can bind‑mount them instead)
+RUN wget -q -O models/RealESRGAN_x4plus.pth \
     https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus.pth
 
-# Expose port and run Uvicorn
-EXPOSE 8000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expose port & launch
+EXPOSE 80
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
