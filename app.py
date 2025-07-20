@@ -15,16 +15,16 @@ model = RRDBNet(
     num_in_ch=3,     # input RGB channels
     num_out_ch=3,    # output RGB channels
     num_feat=64,     # number of feature maps
-    num_block=6,    # number of RRDB blocks
+    num_block=23,    # number of RRDB blocks
     num_grow_ch=32,  # growth channels per RDB
-    scale=4        # 4× upscaling
+    scale=4          # 4× upscaling
 )
 model.eval()
 
-modelpath = './models/RealESRGAN_x4plus_anime_6B.pth'
+modelpath = './models/RealESRGAN_x4plus.pth'
 if not os.path.exists(modelpath):
     print("Downloading model please wait")
-#     url = 'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus_anime_6B.pth'
+    # url = 'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth'
 #     response = requests.get(url)
 #     with open(model, 'wb') as f:
 #         f.write(response.content)
@@ -54,6 +54,7 @@ async def upscale_image(file: UploadFile = File(...),outscale: int = Form(1)):
     - **outscale**: scaling factor for upscaling (integer)
     """
     # Read bytes and convert to OpenCV image
+    print("upscaling started")
     try:
         contents = await file.read()
         np_arr = np.frombuffer(contents, np.uint8)

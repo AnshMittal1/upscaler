@@ -47,8 +47,8 @@ COPY app.py ./
 RUN mkdir -p /app/models /app/cache
 
 # Download ESRGAN anime model into models folder
-RUN wget -q -O /app/models/RealESRGAN_x4plus_anime_6B.pth \
-    https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth
+RUN wget -q -O /app/models/RealESRGAN_x4plus.pth \
+    https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus.pth
 
 # Expose port and run Uvicorn
 EXPOSE 8000
