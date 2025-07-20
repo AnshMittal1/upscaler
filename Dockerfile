@@ -47,8 +47,10 @@ COPY app.py ./
 # Copy the model file(s)
 COPY models ./models
 
-# Expose the port FastAPI/uvicorn will run on
-EXPOSE 8000
+# Expose the port FastAPI/uvicorn will run on\
+ENV PORT=8080
+EXPOSE 8080
+
 
 # Default command
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT}"]
