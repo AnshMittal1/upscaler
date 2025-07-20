@@ -1,7 +1,7 @@
 # ───────────────────────────────────────────────────────────
 # Stage 1: Build dependencies
 # ───────────────────────────────────────────────────────────
-FROM python:3.10-slim AS builder
+FROM python:3.11-slim AS builder
 
 # ensure non‑interactive installs
 ENV DEBIAN_FRONTEND=noninteractive
@@ -24,7 +24,7 @@ RUN pip install --upgrade pip \
 # ───────────────────────────────────────────────────────────
 # Stage 2: Final image
 # ───────────────────────────────────────────────────────────
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 WORKDIR /app
 
