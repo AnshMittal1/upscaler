@@ -36,7 +36,7 @@ if not os.path.exists(modelpath):
 
 upsampler = RealESRGANer(
     scale=2,
-    model_path=modelpath,
+    model_path='https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth',
     model=model,
     tile=0,
     tile_pad=10,
