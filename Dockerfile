@@ -16,7 +16,6 @@ RUN apt-get update \
 COPY requirements.txt ./
 COPY BasicSR ./BasicSR
 
-
 # Install Python dependencies
 RUN pip install --upgrade pip \
  && pip install --no-cache-dir -r requirements.txt
@@ -27,7 +26,16 @@ RUN pip install --upgrade pip \
 # ───────────────────────────────────────────────────────────
 FROM python:3.11-slim
 
+# ensure non‑interactive installs
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /app
+
+# Install OpenCV runtime deps (libGL, etc.)
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+      libgl1-mesa-glx \
+      libglib2.0-0 \
+ && rm -rf /var/lib/apt/lists/*
 
 # Copy installed Python packages & CLI entrypoints
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
